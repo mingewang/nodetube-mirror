@@ -1,0 +1,82 @@
+style.
+  .dropdown-anchors {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    transition: all 0.2s linear;
+    color: white !important;
+    font-weight:500 !important;
+  }
+
+  .dropdown-anchors:hover {
+    color: #4da5f4 !important;
+    background-color: transparent;
+  }
+
+  .brandName {
+    font-size:19px;
+  }
+
+.navbar.navbar-default.navbar-fixed-top(style="background-color:rgb(24,55,147)")
+  .container
+    .navbar-header
+      button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+        span.sr-only Toggle navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a.navbar-brand(href=`/`)
+        h5.brandName(style="color:white;margin-right:-10px;margin-top:0px;") #{brandName}
+    .collapse.navbar-collapse
+      ul.nav.navbar-nav.front-header
+        li(class=(title == 'Home') ? 'active' : undefined)
+          a(href=`/`) Home
+          li(class=(title == 'Popular Uploads') ? 'active' : undefined)
+            // category set to overview to trigger overview functionality by default
+            if popularDefault == 'all'
+              a(href=`/media/popular/1?within=24hour&category=all`) Popular
+            else if popularDefault == 'overview'
+              a(href=`/media/popular/1?within=24hour&category=overview`) Popular
+
+      ul.nav.navbar-nav.navbar-right
+        if !user
+          li(class=(title == 'Login') ? 'active' : undefined)
+            a(href=`/login`) Login
+        else
+          // if user logged in
+          li(class=(title == 'Upload') ? 'active' : undefined)
+            a(href=`/upload`) Upload
+          li.hidden-md.hidden-lg.hidden-sm
+            a(href=`/notifications`) Notifications (#{unreadNotifAmount})
+          li.hidden-md.hidden-lg.hidden-sm
+            a(href=`/user/` + user.channelUrl) My Channel
+          li.hidden-md.hidden-lg.hidden-sm
+            a(href=`/account`) My Account
+          li.hidden-md.hidden-lg.hidden-sm
+            a(href=`/logout`) Logout
+          li.dropdown(class=(title == 'Account Management') ? 'active' : undefined)
+            a.dropdown-toggle(href='#', data-toggle='dropdown')
+              span #{user.channelName || user.channelUrl }
+              i.caret
+            ul.dropdown-menu(style="background-color:rgb(24,55,147);max-width: 147px;")
+              li
+                a.dropdown-anchors(href=`/logout` style="color:white;") Logout
+
+if !user
+  script.
+    $('.subscribed-link').on('touchstart click', function(e){
+      e.preventDefault();
+
+      swal({
+        text: "Please register to subscribe to content",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sign Up Now'
+      }).then(function (result) {
+        if (result.value) {
+          window.location.href = "/signup";
+        }
+      })
+
+
+    })

@@ -1,0 +1,45 @@
+script.
+
+  function getUpdateFromBackend(){
+    var csrf = '#{_csrf}'
+
+    var mediaUniqueTag = '#{upload.uniqueTag}'
+
+    var channelUrl = '#{upload.uploader.channelUrl}'
+
+    var data = {
+      _csrf: csrf,
+      uniqueTag: mediaUniqueTag,
+      channelUrl
+    }
+
+    $.ajax({
+      type: 'POST',
+      url: `/user/${channelUrl}/${mediaUniqueTag}/progress`,
+      data,
+      success: function (data) {
+        console.log(data);
+
+        $('#processing').text(`Your upload is currently ${data}% done being processed`);
+
+        if(parseInt(data) == 100){
+          location.reload();
+        }
+
+      },
+      error: function (err) {
+        console.log(err);
+      }
+    });
+  }
+
+  var userIsOnNgrokDomain = new URL(document.URL).hostname.slice(-8) === "ngrok.io";
+
+  // make the interval 7 seconds if the user is on ngrok to reduce timeout erros
+
+  var ngrokTimeoutAmountInSeconds = 7;
+  var normalNetworkTimeoutInSeconds = 2.5
+
+  var intervalSeconds = userIsOnNgrokDomain ? ngrokTimeoutAmountInSeconds : normalNetworkTimeoutInSeconds
+
+  setInterval(getUpdateFromBackend, 1000 * intervalSeconds)

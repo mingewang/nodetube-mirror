@@ -1,0 +1,243 @@
+extends layout
+
+block content
+
+    style.
+        .pending-string {
+            max-width: 400px;
+            margin: 0 auto;
+            margin-top: 30px;
+        }
+
+
+    br
+    div.center-block.text-center.col-sm-12
+        if upload.status == 'processing'
+
+            div(style="max-width:443px;margin:0 auto;")
+                h2.fw(id="processing") Your upload is currently 1% done being processed
+
+                h4.fw(style="font-size:22px;margin-top:30px;") If your upload is stuck on processing, let an admin know via the social links at the bottom of the page and we'll take a look.
+
+
+        br
+        br
+        if upload.fileType === 'video' && !upload.status !== 'processing'
+            div.display-div(style="min-width:50%;min-height:50%;margin:0 auto;")
+                // TODO: Sub out thumbnail here
+
+                video#media_player.display-element(poster=`${uploadServer}/${upload.uploader.channelUrl}/${upload.thumbnails.generated || upload.thumbnails.medium}` controls='', style="max-width:100%;background-color:black;")
+                    source.video-source(src=`${uploadServer}/${upload.uploader.channelUrl}/${upload.uniqueTag}.mp4`, type='video/mp4')
+
+        else if upload.fileType === 'audio'
+            div
+                audio#media_player.my_audio(style="width:80%;" controls='', preload='none')
+
+                    if upload.fileExtension == '.m4a'
+                        source(src=`${uploadServer}/${upload.uploader.channelUrl}/${upload.uniqueTag}${upload.fileExtension}`, type='audio/mp4')
+                    if upload.fileExtension == '.oga' || upload.fileExtension == '.ogg'
+                        source(src=`${uploadServer}/${upload.uploader.channelUrl}/${upload.uniqueTag}${upload.fileExtension}`, type='audio/ogg')
+                    else
+                        source(src=`${uploadServer}/${upload.uploader.channelUrl}/${upload.uniqueTag}${upload.fileExtension}`, type='audio/mp3')
+
+        else if upload.fileType === 'image'
+            div.display-div(style="")
+                a(href=`${uploadServer}/${upload.uploader.channelUrl}/${upload.uniqueTag}${upload.fileExtension}`)
+                    img.display-element(src=`${uploadServer}/${upload.uploader.channelUrl}/${upload.uniqueTag}${upload.fileExtension}` style="border-radius:13px;max-width:80%;min-width:50%;min-height:50%;max-height:620px;")
+
+
+        div.non-player-content(style="position:relative;")
+
+            br
+            br
+
+            h2.balance-text(class="upload-title-value" style="text-wrap:balance;width:80%;margin:0 auto;font-weight:300")=upload.title
+
+            if upload.visibility == 'pending' && upload.status !== 'processing'
+                h3.pending-string Your video is currently pending moderator approval. If it's still pending after several minutes please contact a mod at
+                    a(href="/discord")  Discord
+
+            br
+            h3.uploader-name(style="margin-top:25px;font-size:26px;")
+                if upload.uploader.customThumbnail
+                    a(href=`/user/${upload.uploader.channelUrl}`)
+
+                        img(src=`${uploadServer}/${upload.uploader.channelUrl}/${upload.uploader.customThumbnail}` style="border-radius:13px;width:159px;height:159px;")
+                        br
+                        br
+                else if upload.uploader.thumbnailUrl
+                    a(href=`/user/${upload.uploader.channelUrl}`)
+
+                        img(src=`${uploadServer}/${upload.uploader._id}/unique.png` style="border-radius:13px;width:159px;height:159px;")
+                        br
+                        br
+
+                a(href=`/user/${upload.uploader.channelUrl}` style="color:rgb(51, 51, 51);font-weight:300")
+
+            // More Upload Details
+            div.col-sm-12
+                if upload.uploader
+                    h4.fw
+                        | Uploaded #{upload.timeAgo} &nbsp
+
+                    if upload.formattedDuration
+                        p.fw
+                            | Duration: #{upload.formattedDuration}
+
+                    if upload.visibility == 'removed'
+                        h2 Upload Deleted
+
+                    if upload.fileType == 'video' || upload.fileType == 'audio'
+
+                        p.fw.fileSizeText(style="margin-top:15px") File Size: #{ Math.round(upload.processedFileSizeInMb) || ( upload.fileSize/ ( 1000 * 1000)).toFixed() } MB
+
+                    if upload.rating
+                        if upload.rating == 'allAges'
+                            p.fw(style="margin-top:15px;font-size:12px;") Rating: Safe For Work
+                        if upload.rating == 'mature'
+                            p.fw(style="margin-top:15px;font-size:12px;") Rating: Not Safe For Work
+                        if upload.rating == 'sensitive'
+                            p.fw(style="margin-top:15px;font-size:12px;") Rating: Sensitive (18+)
+
+
+                    br
+
+
+                // react functionality
+                div.react(style="width:39%;background-color:white;margin:0 auto;border-radius:10px;margin-bottom:21px;padding-bottom:12px;max-width:453px;min-width:247px;")
+                    br
+                    each emoji in emojis
+                        div(style="padding-right:15px;display:inline-block;")
+                            a(href="#")
+                                if currentReact
+                                    if currentReact == emoji.name
+                                        div.clicked-emoji
+                                            img(class=emoji.name src='/emojis/' + emoji.name + '.jpg' width="50px" )
+
+                                    else
+                                        div.unclicked-emoji
+                                            img(class=emoji.name src='/emojis/' + emoji.name + '.jpg' width="50px" )
+
+                                else
+                                    div.clicked-emoji
+                                        img(class=emoji.name src='/emojis/' + emoji.name + '.jpg' width="50px" )
+
+                            p.fw(class=emoji.name) #{emoji.amount}
+
+
+
+                // Upload Description
+                if upload.description
+                    h4.fw(class="upload-description-value") Description
+                    p.fw(style="width:36%;text-align: center;margin: 0 auto;white-space:pre-line;word-wrap:break-word;min-width:240px;" id="descriptionText") #{upload.description}
+
+                br
+                br
+
+            br
+            button.btn.btn-default.copy-button(style="padding:4px 12px" data-clipboard-text=`${upload.title} \n\n${url}`)
+                i.fa.fa-info.fw
+                | Copy Details
+
+            button.btn.btn-default.copy-button(style="padding:4px 12px" data-clipboard-text=`${upload.title} by ${upload.uploader.channelName} \n\n ${url} \n\n #${brandName}`)
+                i.fa.fa-info.fw
+                | With User Info
+
+block extra_js
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/autolinker/1.4.4/Autolinker.js")
+
+
+block extra_css
+  link(rel="stylesheet" href="https://cdn.plyr.io/3.3.21/plyr.css")
+  style.
+    .nodetube-pro {
+        background: #edeeee;
+        font-weight: 400;
+        font-size: 13px;
+        margin-left: 3px;
+        padding: 8px 9px;
+        display: inline-block;
+        border-radius: 3px;
+        transform: translateY(-2px);
+    }
+
+    .dropdown {
+        text-align: center;
+    }
+
+    .button, .dropdown-menu {
+        margin: 10px auto
+    }
+
+    .dropdown-menu {
+        width: 200px;
+        left: 50%;
+        margin-left: -100px;
+        margin-top: 0px;
+    }
+
+
+block extra_footer_js
+
+  if upload.status == 'processing'
+    include ./mediaPlayerPartials/progressTrackerJs
+
+
+
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js")
+  script(src="https://cdn.plyr.io/3.3.21/plyr.js")
+  script.
+    var clipboard = new ClipboardJS('.copy-button');
+
+    clipboard.on('success', function (e) {
+      swal('The text has been copied to your clipboard')
+    });
+
+
+  //COMMENT FUNCTIONALITY CONTAINED HERE
+  script(src="/js/media.js")
+
+  script.
+    balanceText();
+
+  // reportUploadFunctionalityJs
+
+  include ./mediaPlayerPartials/reportUploadFunctionalityJs
+
+  include ./mediaPlayerPartials/changeQualityJs
+
+  include ./mediaPlayerPartials/changeUserDefaultQualityJs
+
+  include mediaPlayerPartials/creditFunctionalityJs
+
+  if user
+    include mediaPlayerPartials/deleteCommentAndBlockUnblockUserJs
+
+  include mediaPlayerPartials/subscribeFunctionalityJs
+
+  include mediaPlayerPartials/sensitiveFunctionalityJs
+
+  include mediaPlayerPartials/plyrAndAutoplayFunctionalityJs
+
+  include mediaPlayerPartials/embedLinkFunctionalityJs
+
+  include ./mediaPlayerPartials/downloadFunctionalityJs
+
+  include ./mediaPlayerPartials/repeatFunctionalityJs
+
+  include ./mediaPlayerPartials/reactFunctionalityJs
+
+  script.
+    var myTextEl = document.getElementById('descriptionText');
+    if (myTextEl)
+    {
+      myTextEl.innerHTML = Autolinker.link(myTextEl.innerHTML);
+    }
+
+  if user
+      script.
+        var user = '#{user.id}'
+  else
+      script.
+        var user = undefined
+
