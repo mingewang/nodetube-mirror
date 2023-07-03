@@ -34,3 +34,11 @@ exports.privacy = async(req, res) => {
 # Nodetube
 original repo https://github.com/mayeaux/nodetube
 changes: for personal use, I removed the abilities of sign up, comments, and hide the login interface
+
+# how to run
+adjust .env.setting and .env.private accordingly
+
+docker compose build
+docker compose up 2>&1 | grep -v 'nodetube-mongo'
+
+http://127.0.0.1:49161/signup

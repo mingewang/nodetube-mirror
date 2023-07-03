@@ -52,7 +52,7 @@ const settings = require('./lib/helpers/settings');
 
 const saveAndServeFilesDirectory = settings.saveAndServeFilesDirectory;
 
-const portNumber =  process.env.PORT || 3333;
+const portNumber =  process.env.PORT || 3000;
 
 if(cluster.isMaster){
   console.log('BOOTING APP...\n');

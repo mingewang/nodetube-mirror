@@ -192,13 +192,13 @@ function frontendRoutes(app){
   app.get('/reset/:token', accountFrontendController.getReset);
   app.get('/confirmEmail/:token', accountFrontendController.getConfirm);
 
-  // app.get('/signup', accountFrontendController.getSignup);
+  app.get('/signup', accountFrontendController.getSignup);
 
   /** account api endpoints **/
   app.post('/login', accountBackendController.postLogin);
   app.post('/forgot', accountBackendController.postForgot);
   app.post('/reset/:token', accountBackendController.postReset);
-  // app.post('/signup', accountBackendController.postSignup);
+  app.post('/signup', accountBackendController.postSignup);
 
   /** include passport here because if its a file host, route is already loaded **/
   app.post('/api/channel/thumbnail/delete', passportConfig.isAuthenticated, internalApiController.deleteChannelThumbnail);
