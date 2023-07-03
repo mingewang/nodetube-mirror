@@ -1,0 +1,34 @@
+
+how to use mongo db:
+
+>  show dbs;
+admin     0.000GB
+config    0.000GB
+local     0.000GB
+nodetube  0.001GB
+
+> use nodetube;
+> show tables;
+adminactions
+comments
+notifications
+reacts
+reports
+sessions
+sitevisits
+subscriptions
+uploads
+users
+views
+
+# find all itesm
+> db.users.find();
+{ "_id" : ObjectId("64a329f290b1d40019e17088"), "privs" : { "autoVisibleUpload" : true, "mirrorFunctionality" : false, "unlistedUpload" : false, "privateUpload" : false, "youtubeBackup" : false, "uploadSize" : 500, "safeForWorkUpload" : true }, "userSettings" : { "mirrorOn" : false, "backupOn" : false, "monetizationOn" : false }, "userData" : { "ips" : [ ] }, "socialMedia" : {  }, "emailConfirmed" : false, "role" : "admin", "verified" : false, "usedUploadServers" : [ ], "receivedSubscriptions" : [ ], "subscriptions" : [ ], "tokens" : [ ], "uploads" : [ ObjectId("64a32a4790b1d40019e1708a"), ObjectId("64a32bf590b1d40019e17094") ], "comments" : [ ], "filter" : "allAges", "plan" : "free", "unseenSubscriptionUploads" : 0, "curated" : false, "credit" : 0, "receivedCredit" : 0, "defaultQuality" : "low", "blockedUsers" : [ ], "email" : "0.84822262335321370.5149149972355982", "password" : "$2a$10$V.bAeztC7hMr1r0Eole.9epdQLvPG8QVpMDK6PFclQeSUIMS1f0R2", "channelUrl" : "mingewang", "createdAt" : ISODate("2023-07-03T20:05:06.372Z"), "updatedAt" : ISODate("2023-07-03T21:09:13.376Z"), "__v" : 2, "uploadToken" : "16O641e8najP0C8WgM6smtru3", "channelDescription" : "test chenc", "channelName" : "mingewang test chanel" }
+
+# update one item
+> db.users.updateOne( {"channelUrl" : "mingewang"},{ $set: { "plan" : "plus"} } )
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+
+> db.users.find();
+{ "_id" : ObjectId("64a329f290b1d40019e17088"), "privs" : { "autoVisibleUpload" : true, "mirrorFunctionality" : false, "unlistedUpload" : false, "privateUpload" : false, "youtubeBackup" : false, "uploadSize" : 500, "safeForWorkUpload" : true }, "userSettings" : { "mirrorOn" : false, "backupOn" : false, "monetizationOn" : false }, "userData" : { "ips" : [ ] }, "socialMedia" : {  }, "emailConfirmed" : false, "role" : "admin", "verified" : false, "usedUploadServers" : [ ], "receivedSubscriptions" : [ ], "subscriptions" : [ ], "tokens" : [ ], "uploads" : [ ObjectId("64a32a4790b1d40019e1708a"), ObjectId("64a32bf590b1d40019e17094") ], "comments" : [ ], "filter" : "allAges", "plan" : "plus", "unseenSubscriptionUploads" : 0, "curated" : false, "credit" : 0, "receivedCredit" : 0, "defaultQuality" : "low", "blockedUsers" : [ ], "email" : "0.84822262335321370.5149149972355982", "password" : "$2a$10$V.bAeztC7hMr1r0Eole.9epdQLvPG8QVpMDK6PFclQeSUIMS1f0R2", "channelUrl" : "mingewang", "createdAt" : ISODate("2023-07-03T20:05:06.372Z"), "updatedAt" : ISODate("2023-07-03T21:09:13.376Z"), "__v" : 2, "uploadToken" : "16O641e8najP0C8WgM6smtru3", "channelDescription" : "test chenc", "channelName" : "mingewang test chanel" }
+
